@@ -99,6 +99,7 @@ public class StudyGroupCollectionManager extends CollectionManager<Long, StudyGr
     @Override
     public StringBuilder show() throws EmptyCollectionException {
         collection = getMap();
+        //todo check if collection here is empty!!!
         StringBuilder output = new StringBuilder();
         if (collection.isEmpty()) {
             throw new EmptyCollectionException();

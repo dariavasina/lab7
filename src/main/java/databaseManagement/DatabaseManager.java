@@ -331,11 +331,20 @@ public class DatabaseManager {
 
     public boolean removeStudyGroup(Long id) throws SQLException {
 
-        String removeQuery = "delete from study_group where id = ?";
+        String removeQuery = "delete from person\n" +
+                "where person.id in (\n" +
+                "    select p.id\n" +
+                "    from study_group\n" +
+                "    join person p on p.id = study_group.group_admin_id\n" +
+                "    where study_group.id = ?);\n" +
+                "\n" +
+                "\n" +
+                "delete from study_group where id = ?;";
 
         try (PreparedStatement removeStatement = databaseHandler.getConnection().prepareStatement(removeQuery)) {
 
             removeStatement.setObject(1, id, Types.BIGINT);
+            removeStatement.setObject(2, id, Types.BIGINT);
 
             removeStatement.executeUpdate();
 
@@ -346,23 +355,25 @@ public class DatabaseManager {
     public boolean removeAll(String login) throws SQLException {
 
         int ownerId = getUserId(login);
-        String removeStudyGroupsQuery = "delete from study_group where owner_id = ?";
+        String removeStudyGroupsQuery = "delete from person where person.id in (\n" +
+                "    select p.id\n" +
+                "    from study_group\n" +
+                "    join person p on p.id = study_group.group_admin_id\n" +
+                "    where owner_id = ?\n" +
+                "    );\n" +
+                "\n" +
+                "    delete from study_group where owner_id = ?" ;
 
-        String selectStudyGroupsQuery = "SELECT id, group_admin_id FROM study_group";
-
-        try (Statement statement = databaseHandler.getConnection().createStatement();
-             ResultSet resultSet = statement.executeQuery(selectStudyGroupsQuery)) {
-            while (resultSet.next()) {
-                int studyGroupId = resultSet.getInt("id");
-                int adminId = resultSet.getInt("group_admin_id");
-                deleteStudyGroup(studyGroupId, ownerId); // Delete study group
-                deletePerson(adminId); // Delete group admin
-            }
+        try (PreparedStatement preparedStatement = databaseHandler.getConnection().prepareStatement(removeStudyGroupsQuery))
+        {
+            preparedStatement.setInt(1, ownerId);
+            preparedStatement.setInt(2, ownerId);
+            preparedStatement.executeUpdate();
         }
         return true;
     }
 
-    private void deleteStudyGroup(int studyGroupId, int ownerId) throws SQLException {
+    /*private void deleteStudyGroup(int studyGroupId, int ownerId) throws SQLException {
         String deleteQuery = "DELETE FROM study_group WHERE id = ? and owner_id = ?";
         try (PreparedStatement preparedStatement = databaseHandler.getConnection().prepareStatement(deleteQuery)) {
             preparedStatement.setInt(1, studyGroupId);
@@ -377,5 +388,5 @@ public class DatabaseManager {
             preparedStatement.setInt(1, personId);
             preparedStatement.executeUpdate();
         }
-    }
+    }*/
 }

@@ -1,4 +1,4 @@
-package threads;
+package server.threads;
 
 import common.collectionManagement.StudyGroupCollectionManager;
 import common.commands.CommandExecutor;
@@ -9,6 +9,7 @@ import common.networkStructures.*;
 import databaseManagement.DataLoader;
 import databaseManagement.DatabaseHandler;
 import databaseManagement.DatabaseManager;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -25,13 +26,15 @@ public class ClientHandler implements Runnable {
     private final StudyGroupCollectionManager collectionManager;
     private final ExecutorService commandExecutionThreadPool;
     private final DatabaseHandler databaseHandler;
+    private final Logger logger;
 
-    public ClientHandler(Socket clientSocket, CommandExecutor commandExecutor, StudyGroupCollectionManager collectionManager, ExecutorService commandExecutionThreadPool, DatabaseHandler databaseHandler) {
+    public ClientHandler(Socket clientSocket, CommandExecutor commandExecutor, StudyGroupCollectionManager collectionManager, ExecutorService commandExecutionThreadPool, DatabaseHandler databaseHandler, Logger logger) {
         this.clientSocket = clientSocket;
         this.commandExecutor = commandExecutor;
         this.collectionManager = collectionManager;
         this.commandExecutionThreadPool = commandExecutionThreadPool;
         this.databaseHandler = databaseHandler;
+        this.logger = logger;
     }
 
     @Override
@@ -52,7 +55,7 @@ public class ClientHandler implements Runnable {
                 String username = request.getUsername();
                 String password = request.getPassword();
 
-                System.out.println("Received authentication request from user " + username);
+                logger.info("Received authentication request from user {}", username);
 
                 try {
                     if (request.isNewUser()) {
@@ -85,33 +88,32 @@ public class ClientHandler implements Runnable {
                     out.writeObject(response);
                     out.flush();
                 } catch (IOException ex) {
-                    System.out.println(ex.getMessage());
+                    logger.error(ex.getMessage());
                 }
 
                 //System.out.println(response.getOutput());
-                System.out.println("Response to authentication successfully sent to client");
+                logger.info("Response to authentication successfully sent to client");
 
 
             } else {
                 CommandRequest request = (CommandRequest) object;
-                System.out.println("Received request: " + request.getCommand());
+                logger.info("Received request: " + request.getCommand());
 
                 try {
                     if (!request.getPassword().equals(databaseHandler.getUsersPassword(request.getUsername()))) {
-                        System.out.println(request.getUsername());
-                        Response response = new CommandResponse("Exception: Authentication error");
+                        Response response = new CommandResponse("Exception: Authentication error ");
 
                         try {
                             out.writeObject(response);
                             out.flush();
-                            System.out.println("Response to a command successfully sent to client");
+                            logger.info("Response to a command successfully sent to client");
                         } catch (IOException e) {
-                            System.err.println("Error sending response: " + e.getMessage());
+                            logger.error("Error sending response: " + e.getMessage());
                         }
                         return;
                     }
                 } catch (SQLException e) {
-                    System.out.println("SQL Exception: " + e.getMessage());
+                    logger.error("SQL Exception: " + e.getMessage());
                 }
 
 
@@ -130,7 +132,7 @@ public class ClientHandler implements Runnable {
                         commandExecutor.execute(command);
                         return commandExecutor.getCommandResponse();
                     } catch (Exception e) {
-                        System.out.println("Command " +  command.getClass() + " threw the exception: " + e.getClass());
+                        logger.error("Command " +  command.getClass() + " threw the exception: " + e.getClass());
                         return new CommandResponse("Exception: " + e.getMessage());
                     }
                 });
@@ -138,16 +140,16 @@ public class ClientHandler implements Runnable {
                 try {
                     out.writeObject(futureResponse.get());
                     out.flush();
-                    System.out.println("Response to a command successfully sent to client");
+                    logger.info("Response to a command successfully sent to client");
                 } catch (IOException e) {
-                    System.err.println("Error sending response: " + e.getMessage());
+                    logger.error("Error sending response: " + e.getMessage());
                 } catch (ExecutionException | InterruptedException ex) {
-                    System.out.println("Error receiving response: " + ex.getMessage());
+                    logger.error("Error receiving response: " + ex.getMessage());
                 }
 
             }
         } catch (IOException e) {
-            System.out.println("SQL Error: " + e.getMessage());
+           logger.error("SQL Error: " + e.getMessage());
         }
     }
 }

@@ -2,6 +2,7 @@ package databaseManagement;
 
 import common.collectionClasses.*;
 import common.exceptions.InvalidInputException;
+import org.slf4j.Logger;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -13,19 +14,22 @@ public class DatabaseHandler {
     private String username;
     private String password;
     private Connection connection;
+    private Logger logger;
 
-    public DatabaseHandler(String url, String username, String password) {
+    public DatabaseHandler(String url, String username, String password, Logger logger) {
         this.url = url;
         this.username = username;
         this.password = password;
+        this.logger = logger;
     }
 
     public void connectToDatabase() {
         try {
             connection = DriverManager.getConnection(url, username, password);
-            System.out.println("Connected to database");
+            logger.info("Connected to database");
         } catch (SQLException e) {
-            System.out.println("Connection to database was unsuccessful, please check your credentials");
+            System.out.println("Connection to database was unsuccessful, please check your credentials and connection to helios");
+            logger.error(e.getMessage());
             System.exit(-1);
         }
     }

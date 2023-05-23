@@ -44,6 +44,13 @@ public class RemoveKeyCommand extends CommandWithResponse {
             dbm.removeStudyGroup(data.get(key).getId());
             getCollection().removeByKey(key);
 
+            Map<Long, StudyGroup> changedCollection = getCollection().getMap();
+            System.out.println("this is collection in collection manager after removing key " + key);
+            for (long k: changedCollection.keySet()) {
+                System.out.println(k);
+                System.out.println(changedCollection.get(k));
+            }
+
         } finally {
             getCollection().getWriteLock().unlock();
         }

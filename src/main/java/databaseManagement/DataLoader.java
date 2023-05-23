@@ -21,6 +21,12 @@ public class DataLoader {
         this.databaseHandler = databaseHandler;
     }
 
+    public DataLoader(DatabaseHandler databaseHandler) {
+        setDatabaseHandler(databaseHandler);
+    }
+
+    public DataLoader() {};
+
     public LinkedHashMap<Long, StudyGroup> loadCollection() throws SQLException {
         String query = "select sg.id, sg.name, sg.x_coordinate, sg.y_coordinate, creation_date, students_count, should_be_expelled,\n" +
                 "                form_of_education.name, semester.name, p.id, p.name, p.passport_id, color.name, country.name,\n" +

@@ -1,0 +1,78 @@
+{
+  "1": {
+    "studentsCount": 50,
+    "groupAdmin": {
+      "name": "Roman",
+      "location": {
+        "x": 4,
+        "y": 3
+      },
+      "hairColor": "RED",
+      "passportID": "1234567"
+    },
+    "shouldBeExpelled": 0,
+    "name": "P3112",
+    "coordinates": {
+      "x": 3,
+      "y": 4
+    },
+    "semester": "THIRD",
+    "formOfEducation": "FULL_TIME_EDUCATION"
+  },
+  "2": {
+    "studentsCount": 15,
+    "groupAdmin": {
+      "name": "Danil",
+      "location": {
+        "x": 56.56,
+        "y": 22.44
+      },
+      "hairColor": "YELLOW",
+      "passportID": "7654321"
+    },
+    "shouldBeExpelled": 5,
+    "name": "M3024",
+    "coordinates": {
+      "x": 14.8,
+      "y": 22
+    },
+    "semester": "FOURTH",
+    "formOfEducation": "DISTANCE_EDUCATION"
+  },
+  "23847": {
+    "studentsCount": 0,
+    "shouldBeExpelled": 0,
+    "name": "t",
+    "coordinates": {
+      "x": 5,
+      "y": 0
+    }
+  },
+  "345": {
+    "studentsCount": 0,
+    "shouldBeExpelled": 0,
+    "name": "lalala",
+    "coordinates": {
+      "x": 3,
+      "y": 0
+    }
+  },
+  "5": {
+    "studentsCount": 0,
+    "shouldBeExpelled": 0,
+    "name": "t",
+    "coordinates": {
+      "x": 5,
+      "y": 0
+    }
+  },
+  "567": {
+    "studentsCount": 0,
+    "shouldBeExpelled": 0,
+    "name": "y",
+    "coordinates": {
+      "x": 6,
+      "y": 0
+    }
+  }
+}

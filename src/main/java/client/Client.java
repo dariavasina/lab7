@@ -18,6 +18,10 @@ public class Client {
         InetAddress address = null;
         int port = 0;
 
+        if (args.length == 0) {
+            System.out.println("Please enter port and address as arguments");
+        }
+
         try {
             address = InetAddress.getByName(args[0]);
         } catch (UnknownHostException e) {
@@ -60,6 +64,7 @@ public class Client {
                     if (commandName.equals("exit")) {
                         if (commandArgs.length == 0) {
                             System.out.println("Bye!");
+
                             System.exit(0);
                         } else {
                             throw new InvalidArgumentsException("Command exit doesn't take any arguments!");

@@ -48,6 +48,7 @@ public class UpdateCommand extends CommandWithResponse {
             newStudyGroup.setId(id);
 
             boolean containsId = data.values().stream().anyMatch(studyGroup -> studyGroup.getId().equals(id));
+            //System.out.println(containsId);
             if (!containsId) {
                 throw new InvalidArgumentsException("Can't find the entered id in collection\nPlease try to enter the command again");
             }

@@ -7,6 +7,7 @@ import common.exceptions.InvalidArgumentsException;
 import common.networkStructures.CommandResponse;
 
 import java.sql.SQLException;
+import java.util.Map;
 
 public class InsertCommand extends CommandWithResponse {
     public InsertCommand(StudyGroupCollectionManager collection) {
@@ -38,6 +39,10 @@ public class InsertCommand extends CommandWithResponse {
             Long id = getDatabaseManager().getStudyGroupIdByCollectionKey(key);
             studyGroup.setId(id);
             getCollection().insert(key, studyGroup);
+
+            Map<Long, String> elementsOwners = getCollection().getElementsOwners();
+            elementsOwners.put(studyGroup.getId(), getUsername());
+            getCollection().setElementsOwners(elementsOwners);
         } finally {
             getCollection().getWriteLock().unlock();
         }
